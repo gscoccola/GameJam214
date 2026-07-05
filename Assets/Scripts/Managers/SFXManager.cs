@@ -8,6 +8,9 @@ public class SFXManager : PersistentSingleton<SFXManager>
 
     [Header("UI")]
     public AudioClip UIClick;
+    public AudioClip UIHover;
+    public AudioClip MenuOpen;
+    public AudioClip MenuClose;
 
     protected override void Awake()
     {
@@ -34,7 +37,7 @@ public class SFXManager : PersistentSingleton<SFXManager>
         return null;
     }
 
-    public void PlaySFX(AudioClip[] clip, bool randomizePitch, float pitch = 1f)
+    public void PlaySFX(AudioClip[] clip, bool randomizePitch = false, float pitch = 1f)
     {
         if (clip == null || clip.Length == 0)
         {
@@ -47,7 +50,7 @@ public class SFXManager : PersistentSingleton<SFXManager>
         PlaySFX(clip[index], randomizePitch, pitch);
     }
 
-    public void PlaySFX(AudioClip clip, bool randomizePitch, float pitch = 1f)
+    public void PlaySFX(AudioClip clip, bool randomizePitch = false, float pitch = 1f)
     {
         if (clip == null)
         {

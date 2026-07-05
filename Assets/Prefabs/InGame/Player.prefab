@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 247907192923696209}
   - component: {fileID: 4222782438717923763}
   - component: {fileID: 153350450812472840}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -47,6 +47,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cde013700a7a10a45a353da0883bbb25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  _xMaxSpeed: 7
+  _XGroundAcc: 20
+  _XAirAcc: 12
+  _XGroundDec: 50
+  _XAirDec: 30
+  _jumpSpeedBurst: 5
+  _jumpAcceleration: 7
+  _maxJumpDuration: 0.2
+  _fallGravityModifier: 2
 --- !u!50 &4222782438717923763
 Rigidbody2D:
   serializedVersion: 5
@@ -121,7 +130,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2318363528696845275}
   - component: {fileID: 5448631821150383104}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -138,7 +147,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 4386857715973034859}
@@ -192,12 +201,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -8360621857648827146, guid: 53efdbab019a4c842b2658f3c5996a80, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cf36fae39b6ecb4448e92362a86b2b5f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 6.0625, y: 14.5625}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

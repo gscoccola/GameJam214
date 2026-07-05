@@ -13,6 +13,8 @@ public class MainMenu : MonoBehaviour
 
     public void ToggleCredits()
     {
+        if (_creditsPanel.activeSelf) SFXManager.Instance.PlaySFX(SFXManager.Instance.MenuClose, true);
+        else SFXManager.Instance.PlaySFX(SFXManager.Instance.MenuClose, true);
         _creditsPanel.SetActive(!_creditsPanel.activeSelf);
         _startPanel.SetActive(!_creditsPanel.activeSelf);
     }

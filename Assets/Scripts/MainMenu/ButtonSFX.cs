@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ButtonSFX : MonoBehaviour
 {
+    [SerializeField] private bool _playSound = true;
     [SerializeField] private float _pitch = 1f;
     private void Awake()
     {
@@ -11,6 +12,9 @@ public class ButtonSFX : MonoBehaviour
 
     public void OnClick()
     {
-        SFXManager.Instance.PlaySFX(SFXManager.Instance.UIClick, true, _pitch);
+        if (_playSound)
+        {
+            SFXManager.Instance.PlaySFX(SFXManager.Instance.UIClick, true, _pitch);
+        }
     }
 }

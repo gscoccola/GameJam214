@@ -12,7 +12,7 @@ TagManager:
   - Water
   - UI
   - Floor
-  - 
+  - Player
   - 
   - 
   - 
@@ -40,6 +40,18 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: LevelSolid
+    uniqueID: 4078781765
+    locked: 0
+  - name: LevelDecor
+    uniqueID: 4291904161
+    locked: 0
+  - name: Component
+    uniqueID: 2769038691
+    locked: 0
+  - name: Character
+    uniqueID: 2425921601
     locked: 0
   m_RenderingLayers:
   - Default

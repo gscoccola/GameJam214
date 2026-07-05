@@ -44,4 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d2372671684f12439c98f84486458c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SFXManager
-  UIClick: {fileID: 0}
+  UIClick: {fileID: 8300000, guid: b44852ffa4551d14c9cd4c05b41c03e2, type: 3}
+  UIHover: {fileID: 8300000, guid: 7f807b8cca9daa74da4fed44fce7eaa3, type: 3}
+  MenuOpen: {fileID: 8300000, guid: f3c9cb94c785bc547bd757d288306f8b, type: 3}
+  MenuClose: {fileID: 8300000, guid: ba37ac16cd09c4f48920ead3b9b8f063, type: 3}

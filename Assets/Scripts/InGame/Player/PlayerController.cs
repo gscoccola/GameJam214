@@ -33,41 +33,43 @@ public class PlayerController : Singleton<PlayerController>
     protected override void Awake()
     {
         base.Awake();
-        _inputActions = new InputActions();
 
         //Component references
         //_animator = GetComponent<PlayerAnimator>();
         _collider = GetComponent<CapsuleCollider2D>();
         _rb = GetComponent<Rigidbody2D>();
         _mass = _rb.mass;
-
-        // Input setup
-        _inputActions.Player.Move.performed += ctx => _moveInput = ctx.ReadValue<Vector2>();
-        _inputActions.Player.Move.canceled += ctx => _moveInput = Vector2.zero;
-        _inputActions.Player.Jump.performed += ctx => TryJump();
-        _inputActions.Player.Jump.canceled += ctx => _isJumping = false;
-        _inputActions.Player.Reset.canceled += ctx => HUD.Instance.RestartLevel();
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        _inputActions.Enable();
+        GameInput.Actions.Platforming.Move.performed += ctx => _moveInput = ctx.ReadValue<Vector2>();
+        GameInput.Actions.Platforming.Move.canceled += ctx => _moveInput = Vector2.zero;
+        GameInput.Actions.Platforming.Jump.performed += ctx => TryJump();
+        GameInput.Actions.Platforming.Jump.canceled += ctx => _isJumping = false;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        _inputActions.Disable();
+        GameInput.Actions.Platforming.Move.performed -= ctx => _moveInput = ctx.ReadValue<Vector2>();
+        GameInput.Actions.Platforming.Move.canceled -= ctx => _moveInput = Vector2.zero;
+        GameInput.Actions.Platforming.Jump.performed -= ctx => TryJump();
+        GameInput.Actions.Platforming.Jump.canceled -= ctx => _isJumping = false;
     }
 
 
     private void FixedUpdate()
     {
+        if (InGameManager.Instance.IsPaused) return;
         CheckIfGrounded();
         SetGravity();
-        if (_isDead /*|| InGameUI.Instance.IsPaused*/) return;
-
-        // Read Inputs
-        _moveInput = _inputActions.Player.Move.ReadValue<Vector2>();
+        if (_isDead || InGameManager.Instance.Mode == GameplayType.Construction) {
+            _moveInput = Vector2.zero;
+        }
+        else
+        {
+            _moveInput = GameInput.Actions.Platforming.Move.ReadValue<Vector2>();
+        }
         float movement = _moveInput.x;
 
         // Apply force
@@ -99,6 +101,7 @@ public class PlayerController : Singleton<PlayerController>
 
     private void TryJump()
     {
+        if (InGameManager.Instance.IsPaused || InGameManager.Instance.Mode == GameplayType.Construction) return;
         if (_isGrounded && !_isJumping)
         {
             _rb.AddForce(Vector2.up * _jumpSpeedBurst * _mass, ForceMode2D.Impulse);
