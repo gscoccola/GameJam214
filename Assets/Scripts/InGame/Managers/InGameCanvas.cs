@@ -14,8 +14,8 @@ public class InGameCanvas : Singleton<InGameCanvas>
 
     private void Start()
     {
-        InGameManager.Instance.OnBuildMode.AddListener(() => ToggleBuildOverlay(true));
-        InGameManager.Instance.OnPlatformingMode.AddListener(() => ToggleBuildOverlay(false));
+        /*InGameManager.Instance.OnBuildMode.AddListener(() => ToggleBuildOverlay(true));
+        InGameManager.Instance.OnPlatformingMode.AddListener(() => ToggleBuildOverlay(false));*/
     }
 
     public void ExitGame()

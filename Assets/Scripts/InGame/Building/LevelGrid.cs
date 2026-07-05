@@ -45,6 +45,27 @@ public class LevelGrid : Singleton<LevelGrid>
                     {
                         _tileTypeGrid[x, y] = TileType.Sand;
                     }
+                    else if (wallTile.name.Contains("resource_0"))
+                    {
+                        _tileTypeGrid[x, y] = TileType.Resource0;
+                    }
+                    else if (wallTile.name.Contains("resource_1"))
+                    {
+                        _tileTypeGrid[x, y] = TileType.Resource1;
+                    }
+                    else if (wallTile.name.Contains("resource_2"))
+                    {
+                        _tileTypeGrid[x, y] = TileType.Resource2;
+                    }
+                    else if (wallTile.name.Contains("resource_3"))
+                    {
+                        _tileTypeGrid[x, y] = TileType.Resource3;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Unknown tile type at ({x}, {y}): {wallTile.name}");
+                        _tileTypeGrid[x, y] = TileType.Sand; // Default to Sand if unknown
+                    }
                     //Debug.Log($"Tile at ({x}, {y}): {_tileTypeGrid[x, y]}");
                 }
             }
@@ -81,14 +102,14 @@ public class LevelGrid : Singleton<LevelGrid>
 
     public Vector2Int WorldToGridPos(Vector3 worldPosition)
     {
-        return new Vector2Int(Mathf.RoundToInt(worldPosition.x - 0.5f - _bounds.x),
-            Mathf.RoundToInt(worldPosition.y - 0.5f - _bounds.y));
+        return new Vector2Int(Mathf.RoundToInt(worldPosition.x - _bounds.x),
+            Mathf.RoundToInt(worldPosition.y - _bounds.y));
     }
 
     public Vector3 GridToWorldPos(Vector2Int gridPosition)
     {
-        return new Vector3(gridPosition.x + 0.5f + _bounds.x,
-            gridPosition.y + 0.5f + _bounds.y, 0f);
+        return new Vector3(gridPosition.x + _bounds.x,
+            gridPosition.y  + _bounds.y, 0f);
     }
 
     public Vector3 SnapToGrid(Vector3 worldPos)
@@ -100,10 +121,24 @@ public class LevelGrid : Singleton<LevelGrid>
     {
         return _tileTypeGrid[pos.x, pos.y];
     }
+    public TileType GetTileTypeAtPos(Vector3 pos)
+    {
+        return _tileTypeGrid[WorldToGridPos(pos).x, WorldToGridPos(pos).y];
+    }
+
+    public bool IsPosValid(Component comp, Vector3 worldPos)
+    {
+        TileType tileType = GetTileTypeAtPos(worldPos);
+        return comp.ValidTiles.Contains(tileType);
+    }
 }
 
 public enum TileType
 {
     Sand,
     Building,
+    Resource0,
+    Resource1,
+    Resource2,
+    Resource3,
 }

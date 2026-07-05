@@ -13,9 +13,9 @@ TagManager:
   - UI
   - Floor
   - Player
-  - 
-  - 
-  - 
+  - InventoryBar
+  - Draggable
+  - Trigger
   - 
   - 
   - 
@@ -52,6 +52,9 @@ TagManager:
     locked: 0
   - name: Character
     uniqueID: 2425921601
+    locked: 0
+  - name: BuildBar
+    uniqueID: 2657773895
     locked: 0
   m_RenderingLayers:
   - Default

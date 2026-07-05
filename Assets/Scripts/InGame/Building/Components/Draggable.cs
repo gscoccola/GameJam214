@@ -6,67 +6,118 @@ using UnityEngine.InputSystem;
 public class Draggable : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 {
     public bool IsSelected;
-    public bool IsSelectable => InGameManager.Instance.Mode == GameplayType.Construction;
-
-    //[SerializeField] private float _force = 5f;
+    public bool IsSelectable = true;
 
     private Camera _camera;
     private Rigidbody2D _rb;
-    //private Vector2 _grabbedLocalPos;
 
     public UnityEvent OnSelected;
     public UnityEvent OnDeSelected;
 
+    private Component _component;
+    private BoxCollider2D _coll;
+    private DraggableState _state = DraggableState.OnItemBar;
+    private SpriteRenderer _spriteRenderer;
+
+    #region Setup
     private void Awake()
     {
+        _spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         _camera = FindAnyObjectByType<Camera>();
         _rb = GetComponent<Rigidbody2D>();
+        _component = _rb.GetComponent<Component>();
+        _coll = GetComponent<BoxCollider2D>();
+    }
+
+    private void Start()
+    {
+        InventoryBar.Instance.AddDraggable(this);
+        SetHidden(true);
     }
 
     private void Update()
     {
-
         if (!IsSelected) return;
         if (!IsSelectable) Deselect();
         Vector3 mouseWorldPos = GetMouseWorldPos();
-        /*Vector3 mouseRelativePos = (mouseWorldPos - transform.position);
-        Vector3 forceVector = mouseRelativePos.normalized * Mathf.Min(mouseRelativePos.magnitude, 0.4f);
-        Vector2 grabbedWorldPos = transform.TransformPoint(_grabbedLocalPos);*/
-        _rb.position = LevelGrid.Instance.SnapToGrid(mouseWorldPos);
-
-        /*_rb.AddForceAtPosition(_force * Time.fixedDeltaTime * forceVector.Flatten(), grabbedWorldPos,
-        ForceMode2D.Impulse);*/
-    }
-
-    private void OnMouseAction(bool mouseDown)
-    {
-        IsSelected = mouseDown;
+        Vector3 newPos = LevelGrid.Instance.SnapToGrid(mouseWorldPos);
+        if (newPos != transform.position) MoveToPos(newPos);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
         Deselect();
     }
-
-    private void Deselect()
-    {
-        OnMouseAction(false);
-        OnDeSelected?.Invoke();
-    }
-
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (!IsSelectable) return;
-       // _grabbedLocalPos = transform.InverseTransformPoint(GetMouseWorldPos());
-        OnSelected?.Invoke();
-        OnMouseAction(true);
+       if (!IsSelectable || InGameManager.Instance.Mode != GameplayType.Construction) return;
+       Select();
     }
+
+    #endregion
 
     private Vector2 GetMouseWorldPos()
     {
         Vector2 mouseScreenPos = Mouse.current.position.ReadValue();
-        // Clamp the new position to the bounds of the screen
         Vector3 newPos = new Vector3(Mathf.Clamp(mouseScreenPos.x, 0, Screen.width), Mathf.Clamp(mouseScreenPos.y, 0, Screen.height), 0f);
         return _camera.ScreenToWorldPoint(newPos);
     }
+
+    private void MoveToPos(Vector3 pos)
+    {
+        _rb.position = pos;
+
+        if (_coll.IsTouchingLayers(LayerMask.GetMask("InventoryBar"))) _state = DraggableState.OnItemBar;
+        else if (LevelGrid.Instance.IsPosValid(_component, pos)) _state = DraggableState.OnValidPos;
+        else _state = DraggableState.OnInvalidPos;
+    }
+
+
+    private void Deselect()
+    {
+        IsSelected = false;
+        OnDeSelected?.Invoke();
+        _spriteRenderer.color = Color.white;
+        if (_state == DraggableState.OnValidPos) Activate();
+        else if (_state == DraggableState.OnInvalidPos) _spriteRenderer.color = Color.red;
+    }
+
+    private void Select()
+    {
+        OnSelected?.Invoke();
+        IsSelected = true;
+        _spriteRenderer.color = new Color(1f, 1f, 1f, 0.5f);
+        if (_component.IsActive) Deactivate();
+    }
+
+
+
+
+    private void Activate()
+    {
+        _component.Activate();
+        ActiveDraggables.Instance.AddDraggable(this);
+        InventoryBar.Instance.RemoveDraggable(this);
+    }
+
+    private void Deactivate()
+    {
+        _component.Deactivate();
+        InventoryBar.Instance.AddDraggable(this);
+        ActiveDraggables.Instance.RemoveDraggable(this);
+    }
+
+    public void SetHidden(bool hidden)
+    {
+        if (!hidden) _spriteRenderer.color = Color.white;
+        _spriteRenderer.enabled = !hidden;
+        _coll.enabled = !hidden;
+    }
+}
+
+public enum DraggableState
+{
+    OnItemBar,
+    OnValidPos,
+    OnInvalidPos,
 }

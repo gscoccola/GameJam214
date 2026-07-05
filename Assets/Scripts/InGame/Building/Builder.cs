@@ -14,6 +14,8 @@ public class Builder : Singleton<Builder>
     {
         InGameManager.Instance.OnBuildMode.AddListener(() => Activate());
         InGameManager.Instance.OnPlatformingMode.AddListener(() => Deactivate());
+        InGameManager.Instance.OnBuildMode.AddListener(() => InventoryBar.Instance.Activate());
+        InGameManager.Instance.OnPlatformingMode.AddListener(() => InventoryBar.Instance.Deactivate());
     }
 
     private void OnDestroy()

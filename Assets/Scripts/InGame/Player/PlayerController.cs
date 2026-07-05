@@ -18,7 +18,6 @@ public class PlayerController : Singleton<PlayerController>
     [SerializeField] private float _fallGravityModifier = 1.8f;
 
 
-    private InputActions _inputActions;
     private Vector2 _moveInput;
     private Rigidbody2D _rb;
     private CapsuleCollider2D _collider;
@@ -43,18 +42,18 @@ public class PlayerController : Singleton<PlayerController>
 
     private void Start()
     {
-        GameInput.Actions.Platforming.Move.performed += ctx => _moveInput = ctx.ReadValue<Vector2>();
-        GameInput.Actions.Platforming.Move.canceled += ctx => _moveInput = Vector2.zero;
-        GameInput.Actions.Platforming.Jump.performed += ctx => TryJump();
-        GameInput.Actions.Platforming.Jump.canceled += ctx => _isJumping = false;
+        /*GameInput.Actions.Platforming.Move.performed += ctx => _moveInput = ctx.ReadValue<Vector2>();
+        GameInput.Actions.Platforming.Move.canceled += ctx => _moveInput = Vector2.zero;*/
+        GameInput.Actions.Platforming.Jump.performed += TryJump;
+        GameInput.Actions.Platforming.Jump.canceled += EndJump;
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        GameInput.Actions.Platforming.Move.performed -= ctx => _moveInput = ctx.ReadValue<Vector2>();
-        GameInput.Actions.Platforming.Move.canceled -= ctx => _moveInput = Vector2.zero;
-        GameInput.Actions.Platforming.Jump.performed -= ctx => TryJump();
-        GameInput.Actions.Platforming.Jump.canceled -= ctx => _isJumping = false;
+        /*GameInput.Actions.Platforming.Move.performed -= ctx => _moveInput = ctx.ReadValue<Vector2>();
+        GameInput.Actions.Platforming.Move.canceled -= ctx => _moveInput = Vector2.zero;*/
+        GameInput.Actions.Platforming.Jump.performed -= TryJump;
+        GameInput.Actions.Platforming.Jump.canceled -= EndJump;
     }
 
 
@@ -99,7 +98,7 @@ public class PlayerController : Singleton<PlayerController>
         }
     }
 
-    private void TryJump()
+    private void TryJump(InputAction.CallbackContext context)
     {
         if (InGameManager.Instance.IsPaused || InGameManager.Instance.Mode == GameplayType.Construction) return;
         if (_isGrounded && !_isJumping)
@@ -108,6 +107,11 @@ public class PlayerController : Singleton<PlayerController>
             _isJumping = true;
             _jumpTimer = _maxJumpDuration;
         }
+    }
+
+    private void EndJump(InputAction.CallbackContext context)
+    {
+        _isJumping = false;
     }
 
     private void CheckIfGrounded()
