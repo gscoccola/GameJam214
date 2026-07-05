@@ -1,6 +1,10 @@
+using NUnit.Framework.Constraints;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TextManager : MonoBehaviour
 {
@@ -19,33 +23,12 @@ public class TextManager : MonoBehaviour
 			text = "";
 			setFlag = "";
 		}
+	}
 	List<CutsceneFrame> scenes;
-	string input = """
-	#firstscene
-	@mc
-	Main Character
-	I'm the main character and I'm gonna do main character things
-	sawfirstcutscene
-	
-	Main Character
-	By not specifying an actor on this scene it should still be the mc, but if you were to jump straight to this frame, it would be blank.
-	
-	#when a scene has a name text of 'condition' it will evaluate the conditional and immediately proceed (flag ifset else)
-	condition
-	sawfirstcutscene endoffirstscene secondscene
-	
-	#endoffirstscene
-	fin
-	Reaching a scene with name text of 'fin' will end the scene and return to gameplay.
-	
-	#secondscene
-	Main Character
-	This would mean I somehow entered on frame 2
-	
-	"""
+	[SerializeField]
+	TextAsset textfile;
 
 	private Dictionary<string, int> sceneAliases;
-	private Dictionary<
 	[SerializeField]
 	GameObject nameText;
 	[SerializeField]
@@ -59,52 +42,63 @@ public class TextManager : MonoBehaviour
 	List<GameObject> portraits;
 	//put them in order of androids first, then humans
 	
-	const string[] portraitNamesArr = {"mc","an1","an2","an3","hu1","hu2","hu3"};
+	string[] portraitNamesArr = {"mc","an1","an2","hu1","hu2","hu3"};
 	Dictionary<string,int> portraitNames;
-	
+
+	[SerializeField]
+	GameObject cutsceneUI;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
 		portraitNames = new();
-		for(int i = 0; i < portraitNames.Length; i++) {
-			portraitNames.Add(portraitNamesArr,i);
+		for(int i = 0; i < portraitNamesArr.Length; i++) {
+			portraitNames.Add(portraitNamesArr[i],i);
 		}
-		
+		string input = textfile.text;
 		scenes = new();
 		sceneAliases = new();
-		string[] lines = input.Split("\n\r");
+		string[] lines = input.Split("\r\n");
 		int state = 0;
 		
 		string name = "", text = "", setFlag = "", sceneAlias = "";
 		List<string> actors = new();
 		foreach(string s in lines) {
-			if(s == "")
+			Debug.Log("State: " + state);
+			Debug.Log("Line: " + s);
+			if(String.IsNullOrWhiteSpace(s))
 			{
 				state = 0;
 				//dump into new cutsceneframe
 				CutsceneFrame newScene = new();
 				newScene.text = text;
 				newScene.name = name;
-				newScene.id = scenes.Count();
+				newScene.id = scenes.Count;
 				foreach(string a in actors) {
-					newScene.actors.Append(a);
+					newScene.actors.Add(a);
 				}
 				newScene.setFlag = setFlag;
 				newScene.sceneAlias = sceneAlias;
-				sceneAliases.Add(sceneAlias, scenes.Count());
-				scenes.Append(newScene);
-				continue;
+				sceneAliases.Add(sceneAlias, scenes.Count);
+				scenes.Add(newScene);
+				Debug.Log("Add scene at position " + (scenes.Count - 1) + " with alias " + sceneAlias);
+				name = "";
+				text = "";
+				setFlag = "";
+				sceneAlias = "";
+                actors = new();
+                continue;
 			}
-			else if(s.CharAt(0) == '#') {
+			else if(s[0] == '#') {
 				//add a sceneAlias
 				sceneAlias = s.Substring(1);
 				
 			}
-			else if(s.CharAt(0) == '@') {
+			else if(s[0] == '@') {
 				//add an actor
-				actors.Append(s.Substring(1));
+				actors.Add(s.Substring(1));
 				//if actors == {"none"}, clear it when rendering
 			}	
 			else {
@@ -127,6 +121,7 @@ public class TextManager : MonoBehaviour
 			}
 			
 		}
+		RenderScene(0);
     }
 	
 	
@@ -140,7 +135,7 @@ public class TextManager : MonoBehaviour
 		return false;
 	}
 	
-	bool SetFlag(string f) {
+	void SetFlag(string f) {
 		if (flags == null) {
 			flags = new();
 		}
@@ -148,26 +143,40 @@ public class TextManager : MonoBehaviour
 	}
 	
 	void RenderScene(string sceneAlias) {
-		if(sceneAliases.ContainsKey(sceneAlias) {
+		if(sceneAliases.ContainsKey(sceneAlias)) {
 			RenderScene(sceneAliases[sceneAlias]);
 		}
 		else {
 			return;
 		}
 	}
+
+	private int currentScene = 0;
+
+    public void NextScene()
+	{
+		currentScene++;
+		RenderScene(currentScene);
+	}
 	
-	
-	
+	void EndScene()
+	{
+        cutsceneUI.SetActive(false);
+    }
 	
 	void RenderScene(int id) {
+		Debug.Log("Attempt to enter scene " + id);
 		if(id == -1) {
 			return;
 		}
+		cutsceneUI.SetActive(true);
 		CutsceneFrame cur = scenes[id];
 		//set the name
 		if(cur.name == "fin") {
 			//close the textbox
-			return;
+			EndScene();
+
+            return;
 		}
 		else if(cur.name == "conditional") {
 			string[] parameters = cur.text.Split(' ');
@@ -179,8 +188,8 @@ public class TextManager : MonoBehaviour
 				goingto = ifso;
 			}
 			//evaluate conditional and then RenderScene the correct choice
-			int exactid;
-			if(Int32.TryParse(goingto,exactid)){
+			int exactid = -1;
+			if(Int32.TryParse(goingto, out exactid)){
 				RenderScene(exactid);
 			}
 			else {
@@ -196,13 +205,22 @@ public class TextManager : MonoBehaviour
 		//display the actors
 		if(cur.actors.Contains("none")) {
 			//make them invisible
-		}
+			leftPortraitSlot.SetActive(false);
+            rightPortraitSlot.SetActive(false);
+        }
 		else if(cur.actors.Count == 1) {
-			//make right invisible, set left
-		}
+            //make right invisible, set left
+            leftPortraitSlot.SetActive(true);
+            rightPortraitSlot.SetActive(false);
+			leftPortraitSlot.GetComponent<Image>().sprite = portraits[portraitNames[cur.actors[0]]].GetComponent<SpriteRenderer>().sprite;
+        }
 		else if(cur.actors.Count == 2) {
-			//make both visible and set both
-		}
+            //make both visible and set both
+            leftPortraitSlot.SetActive(true);
+            rightPortraitSlot.SetActive(true);
+            leftPortraitSlot.GetComponent<Image>().sprite = portraits[portraitNames[cur.actors[0]]].GetComponent<SpriteRenderer>().sprite;
+            rightPortraitSlot.GetComponent<Image>().sprite = portraits[portraitNames[cur.actors[1]]].GetComponent<SpriteRenderer>().sprite;
+        }
 		
 		//set the flag
 		SetFlag(cur.setFlag);

@@ -1,0 +1,23 @@
+#firstscene
+@mc
+Main Character
+I'm the main character and I'm gonna do main character things
+sawfirstcutscene
+
+@mc
+@an1
+Main Character
+By not specifying an actor on this scene it should still be the mc, but if you were to jump straight to this frame, it would be blank.
+
+@none
+#when a scene has a name text of 'condition' it will evaluate the conditional and immediately proceed (flag ifset else)
+conditional
+sawfirstcutscene endoffirstscene secondscene
+
+#endoffirstscene
+fin
+Reaching a scene with name text of 'fin' will end the scene and return to gameplay.
+
+#secondscene
+Main Character
+This would mean I somehow entered on frame 2
