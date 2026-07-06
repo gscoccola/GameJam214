@@ -47,6 +47,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MusicManager
   MusicMenu: {fileID: 8617303939490705440}
   MusicGame: {fileID: 0}
+  _musicClips:
+  - {fileID: 8300000, guid: 0e723c0743effa84fb2c16e0900e663e, type: 3}
+  - {fileID: 8300000, guid: f855982b055501246acb29ec65783b70, type: 3}
+  - {fileID: 8300000, guid: 1ca81ea06c2748c4d9517165c7f0971c, type: 3}
+  - {fileID: 8300000, guid: 5c9eb11f70c6e4b46a931378683148ad, type: 3}
+  _loopingTimes:
+  - 103.935
+  - 84
+  - 150.724
+  - 96
 --- !u!82 &8617303939490705440
 AudioSource:
   m_ObjectHideFlags: 0
@@ -58,7 +68,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: e5ac7001f6a0da0449ce58abea8bf9ed, type: 3}
+  m_Resource: {fileID: 8300000, guid: 0e723c0743effa84fb2c16e0900e663e, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

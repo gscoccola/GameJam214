@@ -84,8 +84,12 @@ public class TextManager : Singleton<TextManager>
 				}
 				newScene.setFlag = setFlag;
 				newScene.sceneAlias = sceneAlias;
-				sceneAliases.Add(sceneAlias, scenes.Count);
-				scenes.Add(newScene);
+				try {
+                    sceneAliases.Add(sceneAlias, scenes.Count);
+                }
+				catch { }
+                scenes.Add(newScene);
+				
                 if (_debug) Debug.Log("Add scene at position " + (scenes.Count - 1) + " with alias " + sceneAlias);
 				name = "";
 				text = "";
@@ -124,7 +128,7 @@ public class TextManager : Singleton<TextManager>
 			}
 			
 		}
-		//RenderScene(0);
+		RenderScene(0);
     }
 	
 	

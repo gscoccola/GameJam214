@@ -27,7 +27,8 @@ public class PlayerController : Singleton<PlayerController>
 
     private float _jumpTimer;
     private bool _isGrounded;
-
+    private Animator _animator;
+    private SpriteRenderer _spriteRenderer;
 
     protected override void Awake()
     {
@@ -38,6 +39,8 @@ public class PlayerController : Singleton<PlayerController>
         _collider = GetComponent<CapsuleCollider2D>();
         _rb = GetComponent<Rigidbody2D>();
         _mass = _rb.mass;
+        _animator = transform.GetChild(0).GetComponent<Animator>();
+        _spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
     }
 
     private void Start()
@@ -96,6 +99,15 @@ public class PlayerController : Singleton<PlayerController>
             _jumpTimer -= Time.fixedDeltaTime;
             if (_jumpTimer <= 0) _isJumping = false;
         }
+
+        else if (_moveInput == Vector2.zero)
+        {
+            _animator.SetBool("IsWalking", false);
+            return;
+        }
+        else if (_moveInput.x > 0) _spriteRenderer.flipX = false;
+        else if (_moveInput.x < 0) _spriteRenderer.flipX = true;
+        _animator.SetBool("IsWalking", true);
     }
 
     private void TryJump(InputAction.CallbackContext context)

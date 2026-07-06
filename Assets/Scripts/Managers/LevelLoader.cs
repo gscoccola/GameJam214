@@ -26,7 +26,7 @@ public class LevelLoader : PersistentSingleton<LevelLoader>
 
     private void Start()
     {
-        MusicManager.Instance.SwitchMusic(MusicManager.Instance.MusicMenu);
+        //MusicManager.Instance.SwitchMusic(MusicManager.Instance.MusicMenu);
         if (Areas.Instance != null)
         {
             CurrentArea = Areas.Instance.AreasList[0];

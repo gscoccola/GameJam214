@@ -3,34 +3,39 @@ using System.Collections;
 
 public class MusicManager : PersistentSingleton<MusicManager>
 {
-    public AudioSource MusicMenu;
-    public AudioSource MusicGame;
-    private AudioSource _playingSource;
+    private AudioSource _audioSource;
+
+    private AudioClip _playingClip;
+    private AudioCustomLooper _audioCustomLooper;
+
+    [SerializeField] private AudioClip[] _musicClips;
+    [SerializeField] private float[] _loopingTimes;
+
 
     private void Start()
     {
-        _playingSource = MusicMenu;
-        if (MusicMenu == null)
-        {
-            Debug.LogWarning($"Music source {MusicMenu} is null.");
-            return;
-        }
-        MusicMenu.Play();
+        _audioCustomLooper = GetComponent<AudioCustomLooper>();
+        _audioSource = GetComponent<AudioSource>();
+
+        _audioSource.clip = _musicClips[0];
+        _playingClip = _audioSource.clip;
+        _audioSource.Play();
+        //_audioCustomLooper.
     }
 
     public void SwitchMusic(AudioSource music)
     {
-        if (music == null)
+        /*if (music == null)
         {
             Debug.LogWarning($"Music source {music} is null.");
             return;
         }
             
         if (music.isPlaying) return;
-        StartCoroutine(Switch(music));
+        StartCoroutine(Switch(music));*/
     }
 
-    private IEnumerator Switch(AudioSource music)
+    /*private IEnumerator Switch(AudioSource music)
     {
         float startVolume = _playingSource.volume;
         while (_playingSource.volume > 0)
@@ -43,5 +48,5 @@ public class MusicManager : PersistentSingleton<MusicManager>
 
         _playingSource = music;
         music.Play();
-    }
+    }*/
 }
