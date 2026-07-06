@@ -239,6 +239,7 @@ MonoBehaviour:
   - {x: 0, y: -2, z: 0}
   - {x: -8, y: -2, z: 0}
   - {x: 9, y: -2, z: 0}
+  LevelGrid: {fileID: 5834915557510137303}
 --- !u!1001 &2930785044857352684
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3184,6 +3185,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4542e52cf3468e64fa1abfe69e16ba5e, type: 3}
+--- !u!114 &5834915557510137303 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8671106796191298619, guid: 4542e52cf3468e64fa1abfe69e16ba5e, type: 3}
+  m_PrefabInstance: {fileID: 2930785044857352684}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7371d3dfc7d9dac4181434252ac0cfde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelGrid
 --- !u!4 &8922051882761421184 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6016038975677296748, guid: 4542e52cf3468e64fa1abfe69e16ba5e, type: 3}

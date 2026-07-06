@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Component : MonoBehaviour
+public class MachineComponent : MonoBehaviour
 {
     [ReadOnly] public bool IsActive;
     [SerializeField] public bool LockOnActivate;

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 // This class generates a grid representation of the level based on a Tilemap and provides pathfinding functionality.
-public class LevelGrid : Singleton<LevelGrid>
+public class LevelGrid : MonoBehaviour
 {
     [Header("Parameters")]
     [SerializeField] private float _updateTime = 1f;
@@ -18,6 +18,7 @@ public class LevelGrid : Singleton<LevelGrid>
 
 
     private TileType[,] _tileTypeGrid;
+    private Directions[,] _spreadDirections;
     [SerializeField] [ReadOnly] private List<Tile> _plantSources = new List<Tile>();
     [SerializeField] [ReadOnly] private List<Tile> _plantConnections = new List<Tile>();
     private BoundsInt _bounds;
@@ -25,9 +26,9 @@ public class LevelGrid : Singleton<LevelGrid>
     private Vector3Int _gridOrigin;
 
     #region Setup
-    private new void Awake()
+    private void Awake()
     {
-        base.Awake();
+        //base.Awake();
         GenerateMovementGrid();
     }
 
@@ -38,16 +39,16 @@ public class LevelGrid : Singleton<LevelGrid>
         _bounds = _solidTilemap.cellBounds;
         TileBase[] solidTiles = _solidTilemap.GetTilesBlock(_bounds);
         _tileTypeGrid = new TileType[_bounds.size.x, _bounds.size.y];
+        _spreadDirections = new Directions[_bounds.size.x, _bounds.size.y];
 
         int tileCount = _solidTilemap.GetTiles(_bounds, out Tilemap.PositionArray positions, out Tilemap.TileArray tiles);
 
         _gridOrigin = positions[0];
-        Debug.Log($"Grid origin: {_gridOrigin}");
-        Debug.Log($"Grid bounds: {_bounds}");
         for (int x = 0; x < _bounds.size.x; x++)
         {
             for (int y = 0; y < _bounds.size.y; y++)
             {
+                _spreadDirections[x, y] = new Directions();
                 TileBase wallTile = solidTiles[x + y * _bounds.size.x];
                 if (wallTile != null)
                 {
@@ -152,7 +153,7 @@ public class LevelGrid : Singleton<LevelGrid>
         return _tileTypeGrid[WorldToGridPos(pos).x, WorldToGridPos(pos).y];
     }
 
-    public bool IsPosValid(Component comp, Vector3 worldPos)
+    public bool IsPosValid(MachineComponent comp, Vector3 worldPos)
     {
         TileType tileType = GetTileTypeAtPos(worldPos);
         return comp.ValidTiles.Contains(tileType);
@@ -171,7 +172,7 @@ public class LevelGrid : Singleton<LevelGrid>
 
     private void UpdateGrid()
     {
-        //Debug.Log("Updating grid...");
+        List<TileChange> tileChanges = new List<TileChange>();
         for (int x = 0; x < _bounds.size.x; x++)
         {
             for (int y = 0; y < _bounds.size.y; y++)
@@ -179,10 +180,17 @@ public class LevelGrid : Singleton<LevelGrid>
                 if (_tileTypeGrid[x, y] == TileType.Empty) { continue; }
                 if (_tileTypeGrid[x, y] == TileType.PlantSource) 
                 { 
-                    //Debug.Log($"Spreading from plant source at ({x}, {y})");
-                    Spread(x, y);
+                    SourceSpread(x, y, tileChanges);
+                }
+                if (_tileTypeGrid[x, y] == TileType.PlantConnection) 
+                {
+                    ConnectionSpread(x, y, tileChanges);
                 }
             }             
+        }
+        foreach (TileChange change in tileChanges)
+        {
+            change.ApplyChange(this);
         }
     }
 
@@ -194,35 +202,90 @@ public class LevelGrid : Singleton<LevelGrid>
         }
     }*/
 
-    private void Spread(int x, int y)
+    private void SourceSpread(int x, int y, List<TileChange> tileChanges)
     {
-        //ChangeTile(_bounds.size.x, _bounds.size.y, _connectionTile, TileType.PlantConnection);
-        if (_tileTypeGrid[x, y] == TileType.PlantSource)
+        if (Random.value > 0.5f) return;
+        Directions availableDirections = new Directions();
+
+        if (x > 0 && (_tileTypeGrid[x - 1, y] == TileType.Sand || _tileTypeGrid[x - 1, y] == TileType.PlantConnection))
         {
-            if (x > 0 && _tileTypeGrid[x - 1, y] == TileType.Sand)
-            {
-                ChangeTile(x - 1, y, _connectionTile, TileType.PlantConnection);
-            }
-            if (x < _bounds.size.x - 1 && _tileTypeGrid[x + 1, y] == TileType.Sand)
-            {
-                ChangeTile(x + 1, y, _connectionTile, TileType.PlantConnection);
-            }
-            if (y > 0 && _tileTypeGrid[x, y - 1] == TileType.Sand)
-            {
-                ChangeTile(x, y - 1, _connectionTile, TileType.PlantConnection);
-            }
-            if (y < _bounds.size.y - 1 && _tileTypeGrid[x, y + 1] == TileType.Sand)
-            {
-                ChangeTile(x, y + 1, _connectionTile, TileType.PlantConnection);
-            }
+            availableDirections.DirectionsList.Add(Vector2Int.left);
         }
+        if (x < _bounds.size.x - 1 && (_tileTypeGrid[x + 1, y] == TileType.Sand || _tileTypeGrid[x + 1, y] == TileType.PlantConnection))
+        {
+            availableDirections.DirectionsList.Add(Vector2Int.right);
+        }
+        if (y > 0 && (_tileTypeGrid[x, y - 1] == TileType.Sand || _tileTypeGrid[x, y - 1] == TileType.PlantConnection))
+        {
+            availableDirections.DirectionsList.Add(Vector2Int.down);
+        }
+        if (y < _bounds.size.y - 1 && (_tileTypeGrid[x, y + 1] == TileType.Sand || _tileTypeGrid[x, y + 1] == TileType.PlantConnection))
+        {
+            availableDirections.DirectionsList.Add(Vector2Int.up);
+        }
+        if (availableDirections.Count() == 0) return;
+        Vector2Int direction = availableDirections.GetRandomDirection();
+        tileChanges.Add(new TileChange
+        {
+            x = x + direction.x,
+            y = y + direction.y,
+            tile = _connectionTile,
+            type = TileType.PlantConnection,
+            spreadDir = direction
+        });
     }
 
-    private void ChangeTile(int x, int y, TileBase tile, TileType type)
+    private void ConnectionSpread(int x, int y, List<TileChange> tileChanges)
+    {
+        if (Random.value > 0.5f) return;
+        Directions availableDirections = new Directions();
+
+        if (x > 0 && (_tileTypeGrid[x - 1, y] == TileType.Sand || _tileTypeGrid[x - 1, y] == TileType.PlantConnection))
+        {
+            availableDirections.DirectionsList.Add(Vector2Int.left);
+        }
+        if (x < _bounds.size.x - 1 && (_tileTypeGrid[x + 1, y] == TileType.Sand || _tileTypeGrid[x + 1, y] == TileType.PlantConnection) )
+        {
+            availableDirections.DirectionsList.Add(Vector2Int.right);
+        }
+        if (y > 0 && (_tileTypeGrid[x, y - 1] == TileType.Sand || _tileTypeGrid[x, y - 1] == TileType.PlantConnection))
+        {
+            availableDirections.DirectionsList.Add(Vector2Int.down);
+        }
+        if (y < _bounds.size.y - 1 && (_tileTypeGrid[x, y + 1] == TileType.Sand || _tileTypeGrid[x, y + 1] == TileType.PlantConnection))
+        {
+            availableDirections.DirectionsList.Add(Vector2Int.up);
+        }
+
+
+        Directions validDirections = _spreadDirections[x, y];
+        availableDirections.Filter(validDirections);
+
+        if (availableDirections.Count() == 0) return;
+        Vector2Int direction = availableDirections.GetRandomDirection();
+        ChangeTile(x + direction.x, y + direction.y, _connectionTile, TileType.PlantConnection, direction);
+    }
+
+    private void ChangeTile(int x, int y, TileBase tile, TileType type, Vector2Int spreadDir)
     {
         //Debug.Log($"Changing tile at ({x}, {y}) to {type}");
         _solidTilemap.SetTile(new Vector3Int(x + _bounds.position.x, y + _bounds.position.y, 0), tile);
         _tileTypeGrid[x, y] = type;
+        _spreadDirections[x, y].DirectionsList.Add(spreadDir);
+    }
+
+    public class TileChange
+    {
+        public int x;
+        public int y;
+        public TileBase tile;
+        public TileType type;
+        public Vector2Int spreadDir;
+
+        public void ApplyChange(LevelGrid grid)
+        {
+            grid.ChangeTile(x, y, tile, type, spreadDir);
+        }
     }
 }
 
@@ -239,4 +302,33 @@ public enum TileType
     Resource3,
     PlantSource,
     PlantConnection,
+}
+
+public class Directions
+{
+    public List<Vector2Int> DirectionsList = new List<Vector2Int>();
+
+    public int Count()
+    {  
+        return DirectionsList.Count; 
+    }
+
+    public Vector2Int GetRandomDirection()
+    {
+        if (DirectionsList.Count == 0) return Vector2Int.zero;
+        return DirectionsList[Random.Range(0, DirectionsList.Count)];
+    }
+
+    public void Filter(Directions other)
+    {
+        List<Vector2Int> newList = new List<Vector2Int>();
+        foreach (Vector2Int dir in DirectionsList)
+        {
+            if (other.DirectionsList.Contains(dir))
+            {
+                newList.Add(dir);
+            }
+        }
+        DirectionsList = newList;
+    }   
 }

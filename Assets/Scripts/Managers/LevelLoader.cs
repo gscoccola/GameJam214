@@ -11,8 +11,9 @@ public class LevelLoader : PersistentSingleton<LevelLoader>
     private Image _fadeImage;
     [SerializeField] private float _fadeTime;
 
-    public GameObject[] Areas;
-    [SerializeField] private GameObject _currentArea;
+    //public GameObject[] Areas;
+    public GameObject CurrentArea;
+    public AreaInfo CurrentAreaInfo;
 
     [HideInInspector] public UnityEvent<AreaInfo, int, int> OnAreaChanged;
 
@@ -26,7 +27,13 @@ public class LevelLoader : PersistentSingleton<LevelLoader>
     private void Start()
     {
         MusicManager.Instance.SwitchMusic(MusicManager.Instance.MusicMenu);
-        if (_currentArea == null) _currentArea = Instantiate(Areas[0], Vector3.zero, Quaternion.identity);
+        if (Areas.Instance != null)
+        {
+            CurrentArea = Areas.Instance.AreasList[0];
+            CurrentAreaInfo = CurrentArea.GetComponent<AreaInfo>();
+        }
+        
+        //if (_currentArea == null) _currentArea = Instantiate(Areas.Instance.AreasList[0], Vector3.zero, Quaternion.identity);
     }
 
     public void ReloadLevel()
@@ -36,7 +43,7 @@ public class LevelLoader : PersistentSingleton<LevelLoader>
 
     public void ReloadAreal()
     {
-        LoadArea(Array.IndexOf(Areas, _currentArea), 0);
+        LoadArea(Array.IndexOf(Areas.Instance.AreasList, CurrentArea), 0);
     }
 
     public void LoadLevel(string sceneName)
@@ -66,18 +73,29 @@ public class LevelLoader : PersistentSingleton<LevelLoader>
 
         if (loadArea)
         {
-            if (_currentArea != null)
+            if (CurrentArea != null)
             {
-                LevelGrid.Instance = null;
-                Destroy(_currentArea);
+                //Destroy(_currentArea);
+                CurrentArea.SetActive(false);
             }
-            _currentArea = Instantiate(Areas[areaNumber], Vector3.zero, Quaternion.identity);
-            OnAreaChanged?.Invoke(_currentArea.GetComponent<AreaInfo>(), spawnNumber, areaNumber);
+            //_currentArea = Instantiate(Areas[areaNumber], Vector3.zero, Quaternion.identity);
+            CurrentArea = Areas.Instance.AreasList[areaNumber];
+            CurrentAreaInfo = CurrentArea.GetComponent<AreaInfo>();
+            CurrentArea.gameObject.SetActive(true);
+            OnAreaChanged?.Invoke(CurrentArea.GetComponent<AreaInfo>(), spawnNumber, areaNumber);
         }
         else
         {
             DOTween.KillAll();
             SceneManager.LoadScene(sceneName);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            if (Areas.Instance != null)
+            {
+                CurrentArea = Areas.Instance.AreasList[areaNumber];
+                CurrentAreaInfo = CurrentArea.GetComponent<AreaInfo>();
+            }
+            else Debug.LogWarning("Areas instance is null after scene load. Make sure Areas is present in the new scene.");
         }
         
 

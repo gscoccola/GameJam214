@@ -103,7 +103,7 @@ namespace DG.Tweening
             }
 
             // Returns FALSE if the DOTween's Physics2D Module is disabled, or if there's no Rigidbody2D attached
-            public static bool HasRigidbody2D(Component target)
+            public static bool HasRigidbody2D(MachineComponent target)
             {
 #if !DOTWEEN_NOPHYSICS2D // PHYSICS2D_MARKER
                 return target.GetComponent<Rigidbody2D>() != null;
@@ -120,7 +120,7 @@ namespace DG.Tweening
 #if UNITY_2018_1_OR_NEWER
             [UnityEngine.Scripting.Preserve]
 #endif
-            public static bool HasRigidbody(Component target)
+            public static bool HasRigidbody(MachineComponent target)
             {
 #if !DOTWEEN_NOPHYSICS // PHYSICS_MARKER
                 return target.GetComponent<Rigidbody>() != null;

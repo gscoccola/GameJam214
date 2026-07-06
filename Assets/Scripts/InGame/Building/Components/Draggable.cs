@@ -15,7 +15,7 @@ public class Draggable : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     [HideInInspector] public UnityEvent OnSelected;
     [HideInInspector] public UnityEvent OnDeSelected;
 
-    private Component _component;
+    private MachineComponent _component;
     private BoxCollider2D _coll;
     private DraggableState _state = DraggableState.OnItemBar;
     private SpriteRenderer _spriteRenderer;
@@ -26,7 +26,7 @@ public class Draggable : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         _spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         _camera = FindAnyObjectByType<Camera>();
         _rb = GetComponent<Rigidbody2D>();
-        _component = _rb.GetComponent<Component>();
+        _component = _rb.GetComponent<MachineComponent>();
         _coll = GetComponent<BoxCollider2D>();
     }
 
@@ -41,7 +41,7 @@ public class Draggable : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         if (!IsSelected) return;
         if (!IsSelectable) Deselect();
         Vector3 mouseWorldPos = GetMouseWorldPos();
-        Vector3 newPos = LevelGrid.Instance.SnapToGrid(mouseWorldPos);
+        Vector3 newPos = LevelLoader.Instance.CurrentAreaInfo.LevelGrid.SnapToGrid(mouseWorldPos);
         if (newPos != transform.position) MoveToPos(newPos);
     }
 
@@ -68,7 +68,7 @@ public class Draggable : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     {
         _rb.MovePosition(pos);
         if (_coll.IsTouchingLayers(LayerMask.GetMask("InventoryBar"))) _state = DraggableState.OnItemBar;
-        else if (LevelGrid.Instance.IsPosValid(_component, pos)) _state = DraggableState.OnValidPos;
+        else if (LevelLoader.Instance.CurrentAreaInfo.LevelGrid.IsPosValid(_component, pos)) _state = DraggableState.OnValidPos;
         else
         {
             _state = DraggableState.OnInvalidPos;

@@ -9,7 +9,7 @@ public class ActiveDraggables : Singleton<ActiveDraggables>
 
     private void Start()
     {
-        for (int i = 0; i < LevelLoader.Instance.Areas.Length; i++)
+        for (int i = 0; i < Areas.Instance.AreasList.Length; i++)
         {
             _areaDraggables[i] = new List<Draggable>();
         }
