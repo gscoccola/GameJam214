@@ -6,9 +6,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TextManager : MonoBehaviour
+public class TextManager : Singleton<TextManager>
 {
-	class CutsceneFrame {
+	[SerializeField] private bool _debug;
+    [HideInInspector] public bool isInCutscene;
+    class CutsceneFrame {
 		public int id;
 		public string sceneAlias;
 		public string name;
@@ -50,7 +52,6 @@ public class TextManager : MonoBehaviour
 
 
 
-    // Start is called before the first frame update
     void Start()
     {
 		portraitNames = new();
@@ -66,8 +67,10 @@ public class TextManager : MonoBehaviour
 		string name = "", text = "", setFlag = "", sceneAlias = "";
 		List<string> actors = new();
 		foreach(string s in lines) {
-			Debug.Log("State: " + state);
-			Debug.Log("Line: " + s);
+			if (_debug) {
+				Debug.Log("State: " + state);
+				Debug.Log("Line: " + s);
+			}
 			if(String.IsNullOrWhiteSpace(s))
 			{
 				state = 0;
@@ -83,7 +86,7 @@ public class TextManager : MonoBehaviour
 				newScene.sceneAlias = sceneAlias;
 				sceneAliases.Add(sceneAlias, scenes.Count);
 				scenes.Add(newScene);
-				Debug.Log("Add scene at position " + (scenes.Count - 1) + " with alias " + sceneAlias);
+                if (_debug) Debug.Log("Add scene at position " + (scenes.Count - 1) + " with alias " + sceneAlias);
 				name = "";
 				text = "";
 				setFlag = "";
@@ -121,7 +124,7 @@ public class TextManager : MonoBehaviour
 			}
 			
 		}
-		RenderScene(0);
+		//RenderScene(0);
     }
 	
 	
@@ -162,15 +165,17 @@ public class TextManager : MonoBehaviour
 	void EndScene()
 	{
         cutsceneUI.SetActive(false);
+        isInCutscene = false;
     }
 	
-	void RenderScene(int id) {
-		Debug.Log("Attempt to enter scene " + id);
+	public void RenderScene(int id) {
+        if (_debug) Debug.Log("Attempt to enter scene " + id);
 		if(id == -1) {
 			return;
 		}
 		cutsceneUI.SetActive(true);
-		CutsceneFrame cur = scenes[id];
+        isInCutscene = true;
+        CutsceneFrame cur = scenes[id];
 		//set the name
 		if(cur.name == "fin") {
 			//close the textbox
@@ -225,13 +230,5 @@ public class TextManager : MonoBehaviour
 		//set the flag
 		SetFlag(cur.setFlag);
 	}
-	
-	
-	
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

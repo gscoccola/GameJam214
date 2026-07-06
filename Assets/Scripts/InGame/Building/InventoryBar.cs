@@ -24,7 +24,6 @@ public class InventoryBar : Singleton<InventoryBar>
         ReorderItems();
         foreach (var item in Items)
         {
-            item.IsSelectable = true;
             item.SetHidden(false);
         }
     }
@@ -34,7 +33,6 @@ public class InventoryBar : Singleton<InventoryBar>
         _spriteRenderer.enabled = false;
         foreach (var item in Items)
         {
-            item.IsSelectable = false;
             item.SetHidden(true);
         }
     }

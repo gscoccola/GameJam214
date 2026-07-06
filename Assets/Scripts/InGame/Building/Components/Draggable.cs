@@ -5,14 +5,15 @@ using UnityEngine.InputSystem;
 
 public class Draggable : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 {
-    public bool IsSelected;
-    public bool IsSelectable = true;
+    [ReadOnly] public bool IsSelected;
+    [ReadOnly] public bool IsSelectable = true;
+    [ReadOnly] public bool Locked;
 
     private Camera _camera;
     private Rigidbody2D _rb;
 
-    public UnityEvent OnSelected;
-    public UnityEvent OnDeSelected;
+    [HideInInspector] public UnityEvent OnSelected;
+    [HideInInspector] public UnityEvent OnDeSelected;
 
     private Component _component;
     private BoxCollider2D _coll;
@@ -65,13 +66,17 @@ public class Draggable : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     private void MoveToPos(Vector3 pos)
     {
-        _rb.position = pos;
-
+        _rb.MovePosition(pos);
         if (_coll.IsTouchingLayers(LayerMask.GetMask("InventoryBar"))) _state = DraggableState.OnItemBar;
         else if (LevelGrid.Instance.IsPosValid(_component, pos)) _state = DraggableState.OnValidPos;
-        else _state = DraggableState.OnInvalidPos;
+        else
+        {
+            _state = DraggableState.OnInvalidPos;
+            _spriteRenderer.color = new Color(1f, 0f, 0f, 0.7f);
+            return;
+        }
+        _spriteRenderer.color = new Color(1f, 1f, 1f, 0.7f);
     }
-
 
     private void Deselect()
     {
@@ -86,12 +91,11 @@ public class Draggable : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     {
         OnSelected?.Invoke();
         IsSelected = true;
-        _spriteRenderer.color = new Color(1f, 1f, 1f, 0.5f);
+        if (_state == DraggableState.OnItemBar) _spriteRenderer.color = new Color(1f, 1f, 1f, 0.7f);
+        else if (_state == DraggableState.OnValidPos) _spriteRenderer.color = new Color(1f, 1f, 1f, 0.7f);
+        else if (_state == DraggableState.OnInvalidPos) _spriteRenderer.color = new Color(1f, 0f, 0f, 0.7f);
         if (_component.IsActive) Deactivate();
     }
-
-
-
 
     private void Activate()
     {
@@ -112,6 +116,14 @@ public class Draggable : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         if (!hidden) _spriteRenderer.color = Color.white;
         _spriteRenderer.enabled = !hidden;
         _coll.enabled = !hidden;
+        if (hidden) IsSelectable = false;
+        else if (!Locked) IsSelectable = true;
+    }
+
+    public void Lock()
+    {
+        Locked = true;
+        IsSelectable = false;
     }
 }
 

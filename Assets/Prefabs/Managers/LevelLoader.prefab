@@ -224,3 +224,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
   _fadeTime: 0.3
+  Areas:
+  - {fileID: 7877461188656804849, guid: bc1a600440e91ea4e878eab62ad2072e, type: 3}
+  - {fileID: 7877461188656804849, guid: 22b323a9fdeb1ed448d3fb876c5061ba, type: 3}
+  - {fileID: 7877461188656804849, guid: d521fda7eb37afa48afcf7236085fd8b, type: 3}
+  _currentArea: {fileID: 0}
+  OnAreaChanged:
+    m_PersistentCalls:
+      m_Calls: []

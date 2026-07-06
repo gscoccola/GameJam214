@@ -7,15 +7,24 @@ using UnityEngine.Tilemaps;
 // This class generates a grid representation of the level based on a Tilemap and provides pathfinding functionality.
 public class LevelGrid : Singleton<LevelGrid>
 {
+    [Header("Parameters")]
+    [SerializeField] private float _updateTime = 1f;
+
+
     [Header("References")]
     [SerializeField] private Tilemap _solidTilemap;
+    [SerializeField] private Tile _plantTile;
+    [SerializeField] private Tile _connectionTile;
 
 
     private TileType[,] _tileTypeGrid;
+    [SerializeField] [ReadOnly] private List<Tile> _plantSources = new List<Tile>();
+    [SerializeField] [ReadOnly] private List<Tile> _plantConnections = new List<Tile>();
     private BoundsInt _bounds;
-    /*private float _cellSize;
-    private float _cellSizeInverse;*/
+    private float _updateTimer;
+    private Vector3Int _gridOrigin;
 
+    #region Setup
     private new void Awake()
     {
         base.Awake();
@@ -30,6 +39,11 @@ public class LevelGrid : Singleton<LevelGrid>
         TileBase[] solidTiles = _solidTilemap.GetTilesBlock(_bounds);
         _tileTypeGrid = new TileType[_bounds.size.x, _bounds.size.y];
 
+        int tileCount = _solidTilemap.GetTiles(_bounds, out Tilemap.PositionArray positions, out Tilemap.TileArray tiles);
+
+        _gridOrigin = positions[0];
+        Debug.Log($"Grid origin: {_gridOrigin}");
+        Debug.Log($"Grid bounds: {_bounds}");
         for (int x = 0; x < _bounds.size.x; x++)
         {
             for (int y = 0; y < _bounds.size.y; y++)
@@ -61,13 +75,23 @@ public class LevelGrid : Singleton<LevelGrid>
                     {
                         _tileTypeGrid[x, y] = TileType.Resource3;
                     }
+                    else if (wallTile.name.Contains("plant"))
+                    {
+                        _tileTypeGrid[x, y] = TileType.PlantSource;
+                        _plantSources.Add((Tile)wallTile);
+                    }
+                    else if (wallTile.name.Contains("connection"))
+                    {
+                        _tileTypeGrid[x, y] = TileType.PlantConnection;
+                        //_plantConnections.Add((Tile)wallTile);
+                    }
                     else
                     {
                         Debug.LogWarning($"Unknown tile type at ({x}, {y}): {wallTile.name}");
-                        _tileTypeGrid[x, y] = TileType.Sand; // Default to Sand if unknown
+                        _tileTypeGrid[x, y] = TileType.Empty;
                     }
-                    //Debug.Log($"Tile at ({x}, {y}): {_tileTypeGrid[x, y]}");
                 }
+                else _tileTypeGrid[x, y] = TileType.Empty;
             }
         }
     }
@@ -99,7 +123,9 @@ public class LevelGrid : Singleton<LevelGrid>
     {
         return CalculatePath(traversableTileTypes, WorldToGridPos(origin), WorldToGridPos(target), excludePoint, excludedPoint);
     }*/
+    #endregion
 
+    #region Interface
     public Vector2Int WorldToGridPos(Vector3 worldPosition)
     {
         return new Vector2Int(Mathf.RoundToInt(worldPosition.x - _bounds.x),
@@ -131,14 +157,86 @@ public class LevelGrid : Singleton<LevelGrid>
         TileType tileType = GetTileTypeAtPos(worldPos);
         return comp.ValidTiles.Contains(tileType);
     }
+    #endregion
+
+    private void Update()
+    {
+        _updateTimer += Time.deltaTime;
+        if (_updateTimer >= _updateTime)
+        {
+            _updateTimer = 0f;
+            UpdateGrid();
+        }
+    }
+
+    private void UpdateGrid()
+    {
+        //Debug.Log("Updating grid...");
+        for (int x = 0; x < _bounds.size.x; x++)
+        {
+            for (int y = 0; y < _bounds.size.y; y++)
+            {
+                if (_tileTypeGrid[x, y] == TileType.Empty) { continue; }
+                if (_tileTypeGrid[x, y] == TileType.PlantSource) 
+                { 
+                    //Debug.Log($"Spreading from plant source at ({x}, {y})");
+                    Spread(x, y);
+                }
+            }             
+        }
+    }
+
+    /*private void Spread(int x, int y)
+    {
+        if (_tileTypeGrid[x, y] == TileType.PlantSource)
+        {
+            
+        }
+    }*/
+
+    private void Spread(int x, int y)
+    {
+        //ChangeTile(_bounds.size.x, _bounds.size.y, _connectionTile, TileType.PlantConnection);
+        if (_tileTypeGrid[x, y] == TileType.PlantSource)
+        {
+            if (x > 0 && _tileTypeGrid[x - 1, y] == TileType.Sand)
+            {
+                ChangeTile(x - 1, y, _connectionTile, TileType.PlantConnection);
+            }
+            if (x < _bounds.size.x - 1 && _tileTypeGrid[x + 1, y] == TileType.Sand)
+            {
+                ChangeTile(x + 1, y, _connectionTile, TileType.PlantConnection);
+            }
+            if (y > 0 && _tileTypeGrid[x, y - 1] == TileType.Sand)
+            {
+                ChangeTile(x, y - 1, _connectionTile, TileType.PlantConnection);
+            }
+            if (y < _bounds.size.y - 1 && _tileTypeGrid[x, y + 1] == TileType.Sand)
+            {
+                ChangeTile(x, y + 1, _connectionTile, TileType.PlantConnection);
+            }
+        }
+    }
+
+    private void ChangeTile(int x, int y, TileBase tile, TileType type)
+    {
+        //Debug.Log($"Changing tile at ({x}, {y}) to {type}");
+        _solidTilemap.SetTile(new Vector3Int(x + _bounds.position.x, y + _bounds.position.y, 0), tile);
+        _tileTypeGrid[x, y] = type;
+    }
 }
+
+
 
 public enum TileType
 {
+    Empty,
     Sand,
     Building,
     Resource0,
     Resource1,
     Resource2,
     Resource3,
+    PlantSource,
+    PlantConnection,
 }

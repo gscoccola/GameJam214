@@ -42,8 +42,7 @@ public class PlayerController : Singleton<PlayerController>
 
     private void Start()
     {
-        /*GameInput.Actions.Platforming.Move.performed += ctx => _moveInput = ctx.ReadValue<Vector2>();
-        GameInput.Actions.Platforming.Move.canceled += ctx => _moveInput = Vector2.zero;*/
+        LevelLoader.Instance.OnAreaChanged.AddListener(TeleportToStartingPos);
         GameInput.Actions.Platforming.Jump.performed += TryJump;
         GameInput.Actions.Platforming.Jump.canceled += EndJump;
     }
@@ -54,6 +53,7 @@ public class PlayerController : Singleton<PlayerController>
         GameInput.Actions.Platforming.Move.canceled -= ctx => _moveInput = Vector2.zero;*/
         GameInput.Actions.Platforming.Jump.performed -= TryJump;
         GameInput.Actions.Platforming.Jump.canceled -= EndJump;
+        LevelLoader.Instance.OnAreaChanged.RemoveListener(TeleportToStartingPos);
     }
 
 
@@ -62,7 +62,7 @@ public class PlayerController : Singleton<PlayerController>
         if (InGameManager.Instance.IsPaused) return;
         CheckIfGrounded();
         SetGravity();
-        if (_isDead || InGameManager.Instance.Mode == GameplayType.Construction) {
+        if (_isDead || InGameManager.Instance.Mode == GameplayType.Construction || TextManager.Instance.isInCutscene) {
             _moveInput = Vector2.zero;
         }
         else
@@ -100,7 +100,7 @@ public class PlayerController : Singleton<PlayerController>
 
     private void TryJump(InputAction.CallbackContext context)
     {
-        if (InGameManager.Instance.IsPaused || InGameManager.Instance.Mode == GameplayType.Construction) return;
+        if (InGameManager.Instance.IsPaused || InGameManager.Instance.Mode == GameplayType.Construction || TextManager.Instance.isInCutscene) return;
         if (_isGrounded && !_isJumping)
         {
             _rb.AddForce(Vector2.up * _jumpSpeedBurst * _mass, ForceMode2D.Impulse);
@@ -125,5 +125,12 @@ public class PlayerController : Singleton<PlayerController>
         if (_isJumping) _rb.gravityScale = 0f;
         else if (_rb.linearVelocityY < 0f) _rb.gravityScale = _fallGravityModifier;
         else _rb.gravityScale = 1f;
+    }
+
+    private void TeleportToStartingPos(AreaInfo info, int spawnNumber, int areaNumber)
+    {
+        _rb.position = info.PlayerStartingPos[spawnNumber];
+        _rb.linearVelocity = Vector2.zero;
+        _isGrounded = true;
     }
 }

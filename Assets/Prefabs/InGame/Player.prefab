@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4386857715973034859}
   - component: {fileID: 247907192923696209}
+  - component: {fileID: 1440890042909846302}
   - component: {fileID: 4222782438717923763}
   - component: {fileID: 153350450812472840}
   m_Layer: 7
@@ -56,6 +57,19 @@ MonoBehaviour:
   _jumpAcceleration: 7
   _maxJumpDuration: 0.2
   _fallGravityModifier: 2
+--- !u!114 &1440890042909846302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4522881361567223244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fbb0fe6b98519b4698f2cbe8da30373, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteract
+  CurrentDialogTrigger: {fileID: 0}
 --- !u!50 &4222782438717923763
 Rigidbody2D:
   serializedVersion: 5
@@ -118,7 +132,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.61, y: 1.38}
+  m_Size: {x: 0.61, y: 1.72}
   m_Direction: 0
 --- !u!1 &4761075897261595397
 GameObject:

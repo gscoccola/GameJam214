@@ -3,25 +3,26 @@ using UnityEngine;
 public class Component : MonoBehaviour
 {
     [ReadOnly] public bool IsActive;
-    [ReadOnly] private SpriteRenderer _spriteRenderer;
+    [SerializeField] public bool LockOnActivate;
+
     public ComponentType Type;
     public TileType[] ValidTiles;
+    private Draggable _draggable;
 
     private void Awake()
     {
-        _spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        _draggable = GetComponent<Draggable>();
     }
 
     public void Activate()
     {
         IsActive = true;
-        //_spriteRenderer.color = Color.white;
+        if (LockOnActivate)_draggable.Lock();
     }
 
     public void Deactivate()
     {
         IsActive = false;
-        //_spriteRenderer.color = Color.red;
     }
 }
 

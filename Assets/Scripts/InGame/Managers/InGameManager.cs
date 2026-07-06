@@ -21,6 +21,8 @@ public class InGameManager : Singleton<InGameManager>
         GameInput.Actions.Game.Reset.performed += ctx => RestartLevel();
         GameInput.Actions.Game.Pause.performed += ctx => TogglePause();
         GameInput.Actions.Game.ToggleMode.performed += ctx => ToggleMode();
+
+        LevelLoader.Instance.OnAreaChanged.AddListener(ToggleConstruction);
     }
 
     private void OnDestroy()
@@ -28,6 +30,8 @@ public class InGameManager : Singleton<InGameManager>
         GameInput.Actions.Game.Reset.performed -= ctx => RestartLevel();
         GameInput.Actions.Game.Pause.performed -= ctx => TogglePause();
         GameInput.Actions.Game.ToggleMode.performed -= ctx => ToggleMode();
+
+        LevelLoader.Instance.OnAreaChanged.RemoveListener(ToggleConstruction);
     }
 
 
@@ -53,9 +57,7 @@ public class InGameManager : Singleton<InGameManager>
     {
         if (Mode == GameplayType.Construction)
         {
-            //Time.timeScale = 1.0f;
-            Mode = GameplayType.Platforming;
-            OnPlatformingMode?.Invoke();
+            ToggleConstruction(null, 0, 0);
         }
         else
         {
@@ -63,6 +65,12 @@ public class InGameManager : Singleton<InGameManager>
             Mode = GameplayType.Construction;
             OnBuildMode?.Invoke();
         }
+    }
+
+    private void ToggleConstruction(AreaInfo info, int spawnNumber, int areaNumber)
+    {
+        Mode = GameplayType.Platforming;
+        OnPlatformingMode?.Invoke();
     }
 }
 
