@@ -16,10 +16,11 @@ Move around using WASD. Jump with space. Some objects can be clicked on to inter
 fin
 fin
 
-#oldman1
+#oldguy1
 @mc
 ???
 Does someone live here? Hello?
+playsong1
 
 @mc
 @hu1
@@ -221,6 +222,7 @@ metwillow
 
 fin
 fin
+playsong2
 
 #oldguyrestate
 Aster
@@ -251,22 +253,33 @@ fin
 
 #android11
 conditional
-introducedtolaurel android11real laurelluck
+introducedtolaurel laurelluck android11real
 
 #android11real
-@mc
-@an1
-Flowery Android
-Fennel, good to see you! What brings you here?
-
 conditional
-metwillow android1met android1didntmeet
+metwillow android1met androidbeforeintro
 
 #android1met
 conditional
 willowhelped android1afterhelp askandroid1aboutpackage
 
+#android1afterhelp
+@mc
+@an1
+Laurel
+You were able to get that package delivered? Glad to hear it!
+
+fin
+fin
+
 #askandroid1aboutpackage
+@mc
+@an1
+Flowery Android
+Fennel, good to see you! What brings you here?
+playsong3
+
+
 Fennel
 I'm looking for a package that was meant to get to Willow, do you have it?
 
@@ -312,6 +325,7 @@ introducedtolaurel
 
 fin
 fin
+playsong2
 
 #android2ignore
 @mc
@@ -361,6 +375,7 @@ conditional
 introduction oldguyafterintro oldguy1
 
 #oldguyafterintro
+conditional
 metwillow oldguyaftermetwillow oldguyrestate
 
 #androidbeforeintro
@@ -417,6 +432,7 @@ helpedwillow
 @hu2
 Willow
 Ah, finally! Thank you!
+playsong4
 
 Fennel
 What is this, anyways?
@@ -466,8 +482,19 @@ helpedwillow
 
 fin
 fin
+finishedgame
 
 
 #lady1cond3
 conditional
 gotpackage2 ladygivepackage ignorebunker
+
+#finishedgame
+Credits
+Programming: gscoccola, saustingames; Art: SnailsAlife; Music: gwenyon, saustingames; SFX: shrnch; Writing: saustingames
+
+Credits
+Thank you for playing!
+
+fin
+fin

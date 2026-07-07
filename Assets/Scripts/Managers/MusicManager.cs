@@ -11,16 +11,32 @@ public class MusicManager : PersistentSingleton<MusicManager>
     [SerializeField] private AudioClip[] _musicClips;
     [SerializeField] private float[] _loopingTimes;
 
+    [SerializeField]
+    GameObject[] musics;
 
     private void Start()
     {
         _audioCustomLooper = GetComponent<AudioCustomLooper>();
         _audioSource = GetComponent<AudioSource>();
 
-        _audioSource.clip = _musicClips[0];
+        /*_audioSource.clip = _musicClips[0];
         _playingClip = _audioSource.clip;
-        _audioSource.Play();
+        _audioSource.Play();*/
         //_audioCustomLooper.
+    }
+
+    private GameObject currentSong = null;
+    public void PlaySong(int i)
+    {
+     
+        if (currentSong == null)
+        {
+            currentSong = musics[0];
+        }
+        currentSong.GetComponent<AudioSource>().Pause();
+
+        musics[i].GetComponent<AudioSource>().Play();
+        currentSong = musics[i];
     }
 
     public void SwitchMusic(AudioSource music)

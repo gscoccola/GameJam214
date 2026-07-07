@@ -1,0 +1,473 @@
+#start
+@mc
+???
+...huh. Where am I?
+
+???
+I don't remember anything. How did I get here? There's nothing around.
+
+???
+...I guess I better start walking.
+
+@none
+Notice
+Move around using WASD. Jump with space. Some objects can be clicked on to interact with them.
+
+fin
+fin
+
+#oldman1
+@mc
+???
+Does someone live here? Hello?
+
+@mc
+@hu1
+Old Guy
+Ah, a visitor? What brings you here? A delivery?
+
+???
+I don't know anything about a delivery... I'm kind of just wandering around.
+
+Old Guy
+How uncharacteristic of you! Did something happen?
+
+???
+You sound like you know better than me.
+
+Old Guy
+Ah, I thought it had been a while since you had come around. The dust storm did just clear up, after all.
+
+???
+I don't understand.
+
+Old Guy
+I would expect not! I can infer what's happened to you. It seems you've lost your memory.
+
+???
+That may be the one thing I already know, but please continue.
+
+Old Guy
+Ha, sarcastic as ever! Not to worry, I will explain everything.
+
+Old Guy
+It seems in some way or another your batteries expired. The dust storm would explain that.
+
+???
+Batteries? What am I, a robot or something?
+
+Old Guy
+"What am I, a robot", he says. To your credit, there aren't many mirrors in the wasteland.
+
+Old Guy
+Here, I'll send through your image as it comes in on my screen.
+
+@mc
+@mc
+???
+Huh, how about that.
+
+@mc
+???
+It seems this ought to be rather shocking, to see a face half human and half robotic.
+
+???
+But, I don't even feel surprised.
+
+@mc
+@hu1
+Old Guy
+Anyhow, there's been a big dust storm that's blotted out the sun for the past few weeks.
+
+@mc
+@hu1
+Old Guy
+You run off solar power, so if you were caught away from a charging station, you  would have shut down.
+
+@mc
+@hu1
+Old Guy
+If the timing was unlucky, the memory could easily have gotten corrupted.
+
+@mc
+@hu1
+???
+Makes sense. You said something about deliveries?
+
+Old Guy
+Yes, you are responsible for getting necessities between those of us living in these bunkers.
+
+Old Guy
+It feels like nothing to you, but the conditions outside are completely uninhabitable for human life.
+
+???
+OK, I'm a delivery robot. Got it.
+
+Old Guy
+You do more than that! But for now I would like to ask you to deliver something.
+
+???
+Sure.
+
+Old Guy
+There's another bunker somewhere around here. I don't go outside of course, but I'm sure it's not far.
+
+Old Guy
+Just tell her it's from me and she'll know what it is.
+
+Notice
+You receive a bundle.
+gotbundle
+
+???
+Except I don't know your name... Or mine.
+
+Old Guy
+How rude! Someone should have programmed you better manners.
+
+Old Guy
+I kid! I am Dr. Aster... but please, just call me Doctor.
+
+Aster
+And you are Fennel, one of my prized creations. Please be more careful this time!
+
+Fennel
+Yes, yes. I will keep an eye out for dust clouds.
+introduction
+
+fin
+fin
+
+#lady1
+@mc
+Fennel
+*knock knock* Uh, hello?
+
+@mc
+@hu2
+Lady
+Yes?
+
+Fennel
+You're expecting a package of some sort from Dr. Aster?
+
+Lady
+Yes, I am. It's taken long enough!
+
+Fennel
+Sorry, my batteries ran out, or something.
+
+Lady
+At least it's here now. You've always been one of the more reliable ones.
+
+@mc
+Fennel
+I hear a rustling sound and the tearing of paper beyond the screen. Then, a look of disappointment.
+
+@mc
+@hu2
+Fennel
+Is it the wrong package, or something?
+
+Lady
+No, it's correct. If not complete.
+
+Lady
+There are two pieces. It's been so long, I wondered if they weren't consolidated.
+
+Fennel
+Uh, is there something I can do?
+
+Lady
+You know what, you just might could. I'm sure this package is in the hands of one of your less disciplined fellows.
+
+Fennel
+Like, other androids?
+
+Lady
+Yes, other androids. See if you can't track them down and get the other parcel for me.
+
+Fennel
+How can I find them?
+
+Lady
+I don't know that they have GPS trackers or anything. Just look around.
+
+Lady
+If they're outside a bunker, you can rest assured they're an android.
+
+Lady
+Failing that, just look at them. The Doctor never had an eye for subtlety.
+
+@mc
+Fennel
+What a kind thing to say to my half human half robotic face.
+
+Fennel
+Then again, a lack of subtlety isn't necessarily a bad thing. Perhaps she thinks my half human half robotic face is like, super cool.
+
+Lady
+Anyhow, when you find the offending sloth, just ask for my package and bring it here.
+
+Fennel
+Like I said, my batteries ran out. That means I don't remember things. Like your name.
+
+Willow
+My name is Willow. Glad again to make your acquaintance.
+
+Fennel
+Right... well, off I go.
+metwillow
+
+fin
+fin
+
+#oldguyrestate
+Aster
+Having trouble finding the other bunker? I wish I could help.
+
+Aster
+But if what you want is conversation, I couldn't leave if I wanted to!
+
+fin
+fin
+
+#oldguyaftermetwillow
+Aster
+Ah, you found the bunker then?
+
+Aster
+But it's missing the other piece? How could that be?
+
+Aster
+That part was due to arrive before I had even started working on this one!
+
+Aster
+When you find the android responsible for this, please give them a stern scolding!
+toldtogivescolding
+
+fin
+fin
+
+#android11
+conditional
+introducedtolaurel android11real laurelluck
+
+#android11real
+@mc
+@an1
+Flowery Android
+Fennel, good to see you! What brings you here?
+
+conditional
+metwillow android1met android1didntmeet
+
+#android1met
+conditional
+willowhelped android1afterhelp askandroid1aboutpackage
+
+#askandroid1aboutpackage
+Fennel
+I'm looking for a package that was meant to get to Willow, do you have it?
+
+Flowery Android
+Me? No, I don't bother with deliveries. They know better than to entrust me with such things!
+
+Flowery Android
+Did you hit your head or something?
+
+Fennel
+Literally no, figuratively yes. Who are you, again?
+
+Laurel
+Only your best friend! It's Laurel! What happened?
+
+Fennel
+Apparently my batteries ran out and my memory got corrupted?
+
+Laurel
+We were holed up at that charging station throughout this whole dust storm worried about you! At least now you're alright...
+
+Fennel
+We?
+
+Laurel
+Oh, no! This is a fitting punishment for your carelessness. Remain oblivious, fumbling around and carelessly reintroducing yourself to every single person you've ever met.
+
+Laurel
+Maybe that will teach you to take it a little easier going forward!
+
+Fennel
+Great... So this mystery other android is the culprit who hasn't delivered the package I'm after.
+
+Laurel
+Seems so.
+
+#laurelluck
+@mc
+@an1
+Laurel
+Best of luck finding him!
+introducedtolaurel
+
+fin
+fin
+
+#android2ignore
+@mc
+@an2
+Android
+They seem to be ignoring you.
+
+fin
+fin
+
+#android2getitem
+@mc
+@an2
+Android
+Ah, just the man I'm looking for!
+
+Fennel
+Coincidentally, I'm looking for you as well.
+
+Android
+This package has gotten to be a real pain on my back. Mind taking it off my hands?
+
+Fennel
+Please.
+
+Notice
+You receive another bundle.
+gotpackage2
+
+fin
+fin
+
+#android2real
+conditional
+helpedwillow android2ignore android2alreadygot
+
+#android2alreadygot
+conditional
+gotpackage2 android2ignore android2getitem
+
+#android21
+conditional
+metwillow android2real android2ignore
+
+#human1
+conditional
+introduction oldguyafterintro oldguy1
+
+#oldguyafterintro
+metwillow oldguyaftermetwillow oldguyrestate
+
+#androidbeforeintro
+Android
+The android before you is motionless, staring at you.
+
+Android
+They gaze at you almost as if to say, "there wasn't sufficient time to implement  such significant branching of order of dialogue, so be a good sport and interact with the first bunker you saw."
+
+Android
+Android communication really is efficient.
+
+fin
+fin
+
+#android1
+conditional
+introduction android11 androidbeforeintro
+
+#android2
+conditional
+introduction android21 androidbeforeintro
+
+#ignorebunker
+@mc
+???
+Hello?
+
+???
+There is no answer.
+
+fin
+fin
+
+#human2
+conditional
+introduction lady1cond1 ignorebunker
+
+#lady1cond1
+conditional
+metwillow lady1cond2 lady1
+
+#lady1cond2
+conditional
+helpedwillow ignorebunker lady1cond3
+
+#ladygivepackage
+@mc
+Fennel
+Hello? Willow? I got that package...
+helpedwillow
+
+@mc
+@hu2
+Willow
+Ah, finally! Thank you!
+
+Fennel
+What is this, anyways?
+
+Willow
+It's a new part for my hydroponics system. I grow plants in here.
+
+Fennel
+Plants, huh. There are some such systems outside.
+
+Willow
+Yes, plants have been quicker than humans to adapt to the conditions out there.
+
+Willow
+There's a lot of infrastructure remaining from before things got out of hand.
+
+Willow
+Plants still need water, but these varieties can be rather uncontrollable.
+
+Willow
+Please keep maintaining them. Without those plants things'll never get back the way they are before.
+
+Fennel
+So is this how things have been for me? Delivering packages and fixing machines?
+
+Willow
+We take it one step at a time. Your slacker of a friend doesn't seem to get it, but you have no idea what we would give for the opportunity to help out the way you do.
+
+Fennel
+I don't mind all the running around. Just trying to get a wrap on how things were.
+
+Willow
+You're an android-- you've got plenty of time to make new memories.
+
+Willow
+We can say that this sort of work is how things have been, but there's really no telling where they'll end up.
+
+Fennel
+That is true.
+
+Fennel
+Well, I guess I ought to get onto the next task.
+
+Willow
+Don't let me keep you then! And, thanks again.
+helpedwillow
+
+fin
+fin
+
+
+#lady1cond3
+conditional
+gotpackage2 ladygivepackage ignorebunker

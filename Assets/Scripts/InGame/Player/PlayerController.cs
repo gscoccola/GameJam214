@@ -59,6 +59,7 @@ public class PlayerController : Singleton<PlayerController>
         LevelLoader.Instance.OnAreaChanged.RemoveListener(TeleportToStartingPos);
     }
 
+    private float lastPlayedWalk = 0f;
 
     private void FixedUpdate()
     {
@@ -108,6 +109,12 @@ public class PlayerController : Singleton<PlayerController>
         else if (_moveInput.x > 0) _spriteRenderer.flipX = false;
         else if (_moveInput.x < 0) _spriteRenderer.flipX = true;
         _animator.SetBool("IsWalking", true);
+
+        if(_animator.GetBool("IsWalking") == true && Time.time - lastPlayedWalk > 0.5f)
+        {
+            SFXManager.Instance.PlaySFX(SFXManager.Instance.steps, true);
+            lastPlayedWalk = Time.time;
+        }
     }
 
     private void TryJump(InputAction.CallbackContext context)
@@ -118,6 +125,7 @@ public class PlayerController : Singleton<PlayerController>
             _rb.AddForce(Vector2.up * _jumpSpeedBurst * _mass, ForceMode2D.Impulse);
             _isJumping = true;
             _jumpTimer = _maxJumpDuration;
+            SFXManager.Instance.PlaySFX(SFXManager.Instance.jump);
         }
     }
 

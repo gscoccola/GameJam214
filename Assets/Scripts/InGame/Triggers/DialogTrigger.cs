@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DialogTrigger : MonoBehaviour
 {
-    [SerializeField] private int _sceneIndex;
+    [SerializeField] private string _sceneIndex;
     [SerializeField] private bool _requiresInteract = true;
 
     private void Awake()
@@ -32,5 +32,6 @@ public class DialogTrigger : MonoBehaviour
     public void StartDialog()
     {
         TextManager.Instance.RenderScene(_sceneIndex);
+        SFXManager.Instance.PlaySFX(SFXManager.Instance.MenuOpen);
     }
 }

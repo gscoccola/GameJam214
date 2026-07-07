@@ -48,3 +48,7 @@ MonoBehaviour:
   UIHover: {fileID: 8300000, guid: 7f807b8cca9daa74da4fed44fce7eaa3, type: 3}
   MenuOpen: {fileID: 8300000, guid: f3c9cb94c785bc547bd757d288306f8b, type: 3}
   MenuClose: {fileID: 8300000, guid: ba37ac16cd09c4f48920ead3b9b8f063, type: 3}
+  humantalk: []
+  robottalk: []
+  steps: {fileID: 8300000, guid: 41a2aafa17edfea46971fa6e632fd945, type: 3}
+  jump: {fileID: 8300000, guid: 1466ebd5de56d0e45925311d74a78b1a, type: 3}

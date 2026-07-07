@@ -54,6 +54,7 @@ public class TextManager : Singleton<TextManager>
 
     void Start()
     {
+		_debug = false;
 		portraitNames = new();
 		for(int i = 0; i < portraitNamesArr.Length; i++) {
 			portraitNames.Add(portraitNamesArr[i],i);
@@ -147,9 +148,27 @@ public class TextManager : Singleton<TextManager>
 			flags = new();
 		}
 		flags[f] = true;
-	}
+
+		switch(f)
+		{
+			case "playsong1":
+                MusicManager.Instance.PlaySong(2);
+                break;
+            case "playsong2":
+                MusicManager.Instance.PlaySong(1);
+                break;
+            case "playsong3":
+                MusicManager.Instance.PlaySong(3);
+                break;
+            case "playsong4":
+				MusicManager.Instance.PlaySong(0);
+                break;
+
+
+        }
+    }
 	
-	void RenderScene(string sceneAlias) {
+	public void RenderScene(string sceneAlias) {
 		if(sceneAliases.ContainsKey(sceneAlias)) {
 			RenderScene(sceneAliases[sceneAlias]);
 		}
@@ -162,8 +181,9 @@ public class TextManager : Singleton<TextManager>
 
     public void NextScene()
 	{
-		currentScene++;
-		RenderScene(currentScene);
+        SFXManager.Instance.PlaySFX(SFXManager.Instance.UIClick);
+        RenderScene(++currentScene);
+
 	}
 	
 	void EndScene()
@@ -173,6 +193,13 @@ public class TextManager : Singleton<TextManager>
     }
 	
 	public void RenderScene(int id) {
+		if (GetFlag("finishedgame") && id != sceneAliases["finishedgame"])
+		{
+			RenderScene("finishedgame");
+			return;
+		}
+
+		currentScene = id;
         if (_debug) Debug.Log("Attempt to enter scene " + id);
 		if(id == -1) {
 			return;
@@ -180,10 +207,18 @@ public class TextManager : Singleton<TextManager>
 		cutsceneUI.SetActive(true);
         isInCutscene = true;
         CutsceneFrame cur = scenes[id];
-		//set the name
-		if(cur.name == "fin") {
-			//close the textbox
-			EndScene();
+
+        if (GetFlag("finishedgame") && id != sceneAliases["finishedgame"] && cur.name != "fin")
+        {
+            RenderScene("finishedgame");
+            return;
+        }
+
+        //set the name
+        if (cur.name == "fin") {
+            //close the textbox
+            SetFlag(cur.setFlag);
+            EndScene();
 
             return;
 		}
@@ -193,12 +228,21 @@ public class TextManager : Singleton<TextManager>
 			string ifso = parameters[1];
 			string ifnot = parameters[2];
 			string goingto = ifnot;
+			Debug.Log("Evaluating condition " + cond);
 			if(GetFlag(cond)) {
-				goingto = ifso;
-			}
-			//evaluate conditional and then RenderScene the correct choice
-			int exactid = -1;
+				
+
+                goingto = ifso;
+                Debug.Log("Came back true, so going to " + goingto);
+            }
+			else
+			{
+                Debug.Log("Came back false, so going to " + goingto);
+            }
+				//evaluate conditional and then RenderScene the correct choice
+				int exactid = -1;
 			if(Int32.TryParse(goingto, out exactid)){
+				
 				RenderScene(exactid);
 			}
 			else {

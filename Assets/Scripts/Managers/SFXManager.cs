@@ -12,6 +12,25 @@ public class SFXManager : PersistentSingleton<SFXManager>
     public AudioClip MenuOpen;
     public AudioClip MenuClose;
 
+    [SerializeField]
+    public AudioClip[] humantalk;
+
+    [SerializeField]
+    public AudioClip[] robottalk;
+
+    [SerializeField]
+    public AudioClip steps;
+
+    [SerializeField]
+    public AudioClip jump;
+
+    public AudioClip GetRandomTalk(AudioClip[] fromwhat)
+    {
+        int outof = fromwhat.Length;
+        int i = outof*Random.Range(0, outof);
+        return fromwhat[i];
+    }
+
     protected override void Awake()
     {
         base.Awake();
